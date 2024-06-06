@@ -100,7 +100,9 @@ def decode_jwt_token(token):
         jwt=token,
         algorithms=decode_algorithms,
         audience=api_settings.IDENTITY,
-        verify=False,
+        options={
+            "verify_signature": False,
+        },
     )
 
     if unverified_header.get(claims.KEY_ID):
