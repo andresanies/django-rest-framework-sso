@@ -89,12 +89,19 @@ def encode_jwt_token(payload):
         algorithm=api_settings.ENCODE_ALGORITHM,
         headers=headers,
         json_encoder=DjangoJSONEncoder,
-    ).decode("utf-8")
+    )
 
 
 def decode_jwt_token(token):
+    decode_algorithms = api_settings.DECODE_ALGORITHMS or [api_settings.ENCODE_ALGORITHM]
+
     unverified_header = jwt.get_unverified_header(token)
-    unverified_claims = jwt.decode(token, verify=False)
+    unverified_claims = jwt.decode(
+        jwt=token,
+        algorithms=decode_algorithms,
+        audience=api_settings.IDENTITY,
+        verify=False,
+    )
 
     if unverified_header.get(claims.KEY_ID):
         unverified_key_id = str(unverified_header.get(claims.KEY_ID))
